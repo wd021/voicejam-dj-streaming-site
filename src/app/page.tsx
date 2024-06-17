@@ -101,7 +101,7 @@ export default function Home() {
   return (
     <div className="flex h-screen w-full items-center justify-center">
       <Image
-        src="/background.png"
+        src="/background.jpg"
         alt="Cover Image"
         layout="fill"
         objectFit="cover"

@@ -42,14 +42,12 @@ export const Playlist = ({
   currentSongId: number;
 }) => {
   return (
-    <div className="py-4 flex flex-col gap-y-4">
+    <div className="py-4 flex flex-col">
       {songs.map((song) => (
         <div
           data-id={song.id}
-          className={`flex items-center px-4 py-2 ${
-            song.id === currentSongId
-              ? "opacity-100 bg-gray-800 text-white"
-              : "opacity-65"
+          className={`flex items-center px-4 py-4 ${
+            song.id === currentSongId ? "bg-black text-white" : ""
           }`}
           key={song.id}
         >
@@ -158,7 +156,7 @@ const Player: React.FC<Props> = ({ room, songs, onFinish }) => {
             </div>
             <div>vs.</div>
             <div className="text-4xl underline decoration-8 decoration-[#4169E1] underline-offset-8">
-              {room.team_a}
+              {room.team_b}
             </div>
           </div>
         )}
