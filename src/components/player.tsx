@@ -195,30 +195,30 @@ const Player: React.FC<Props> = ({ room, songs, onFinish }) => {
 
   return (
     <div>
-      <div className="bg-white h-[100px] flex items-center px-2 font-semibold justify-between rounded-full shadow-xl">
+      <div className="bg-white h-[85px] lg:h-[100px] flex items-center px-2 font-semibold justify-between rounded-full shadow-xl">
         <img
           src={room.thumbnail}
           alt={room.title}
-          className="rounded-full shrink-0 w-[85px] h-[85px]"
+          className="rounded-full shrink-0 w-[60px] h-[60px] lg:w-[85px] lg:h-[85px]"
         />
         <div className="flex flex-col items-center">
           {room.type === 1 ? (
-            <div className="text-4xl underline decoration-4 decoration-[#cf2724] underline-offset-8">
+            <div className="text-2xl lg:text-4xl underline decoration-4 decoration-[#cf2724] underline-offset-4 lg:underline-offset-8">
               {room.title}
             </div>
           ) : (
             <div className="flex items-center gap-x-2 text-4xl">
-              <div className="text-4xl underline decoration-4 decoration-[#cf2724] underline-offset-8">
+              <div className="text-2xl lg:text-4xl underline decoration-4 decoration-[#cf2724] underline-offset-4 lg:underline-offset-8">
                 {room.team_a}
               </div>
               <div>vs.</div>
-              <div className="text-4xl underline decoration-4 decoration-[#4169E1] underline-offset-8">
+              <div className="text-2xl lg:text-4xl underline decoration-4 decoration-[#4169E1] underline-offset-4 lg:underline-offset-8">
                 {room.team_b}
               </div>
             </div>
           )}
           {songs && songs.length > 0 && (
-            <div className="text-lg mt-3 leading-tight">
+            <div className="text-sm lg:text-lg mt-2 lg:mt-3 leading-tight">
               {songs.length} songs ({currentSongPosition + 1}/{songs.length})
             </div>
           )}
@@ -226,13 +226,13 @@ const Player: React.FC<Props> = ({ room, songs, onFinish }) => {
         <img
           src={room.thumbnail}
           alt={room.title}
-          className="rounded-full shrink-0 w-[85px] h-[85px]"
+          className="rounded-full shrink-0 w-[60px] h-[60px] lg:w-[85px] lg:h-[85px]"
         />
       </div>
-      <div className="my-8 h-[550px] w-[800x] flex gap-x-6">
+      <div className="my-8 h-[550px] w-[800x] flex gap-x-6 items-center justify-center">
         <div
           ref={playlistRef}
-          className="h-full bg-white w-[400px] rounded-[50px] overflow-hidden"
+          className="hidden lg:flex h-full bg-white w-[400px] rounded-[50px] overflow-hidden"
         >
           <Playlist songs={songs} currentSongId={currentSongId} />
         </div>
@@ -254,7 +254,7 @@ const Player: React.FC<Props> = ({ room, songs, onFinish }) => {
           </div>
         </div>
       </div>
-      <div className="bg-white h-[100px] rounded-full bangers-font text-7xl px-2 flex items-center justify-between shadow-xl">
+      <div className="bg-white h-[85px] lg:h-[100px] rounded-full bangers-font text-5xl lg:text-7xl px-2 flex items-center justify-between shadow-xl">
         <Music />
         <div>VOICEJAM.XYZ</div>
         <Music />

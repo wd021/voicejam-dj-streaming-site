@@ -5,8 +5,7 @@ const Heart: React.FC = () => {
     <svg
       enableBackground="new 0 0 232 232"
       viewBox="0 0 232 232"
-      width="80"
-      height="80"
+      className="h-[60px] w-[60px] lg:h-[80px] lg:w-[80px]"
     >
       <g>
         <path
