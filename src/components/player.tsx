@@ -11,13 +11,25 @@ interface Props {
 const ASSETS_URL = "https://voicejam-assets.s3.amazonaws.com/";
 const PROFILE_URL = "https://voicejam-profile-images.s3.amazonaws.com/";
 
-export const MediaPlayer = ({ file }: { file: string }) => {
+export const MediaPlayer = ({
+  file,
+  audioCurrentTime,
+  audioDuration,
+}: {
+  file: string;
+  audioCurrentTime: number;
+  audioDuration: number;
+}) => {
   return (
     <>
       {file.endsWith(".mp4") ? (
         <video
+          key={file}
           muted
           loop
+          playsInline
+          autoPlay
+          webkit-playsinline="true"
           className={`max-w-full w-[450px] h-[675px] lg:rounded-md object-cover flex`}
         >
           <source src={ASSETS_URL + file} type="video/mp4" />
@@ -30,6 +42,12 @@ export const MediaPlayer = ({ file }: { file: string }) => {
           className={`max-w-full w-[450px] h-[675px] lg:rounded-md flex`}
         />
       )}
+      <div className="bg-white h-2 absolute bottom-4 left-10 right-10 rounded-full overflow-hidden">
+        <div
+          className="bg-black h-2"
+          style={{ width: `${(audioCurrentTime / audioDuration) * 100}%` }}
+        ></div>
+      </div>
     </>
   );
 };
@@ -54,21 +72,23 @@ export const Playlist = ({
           <img
             src={PROFILE_URL + song.profiles.profile_pic}
             alt={song.title}
-            width={65}
-            height={65}
+            width={50}
+            height={50}
             className="rounded-full"
           />
-          <div className="flex flex-col pl-3 text-sm">
-            <div className="font-semibold">@{song.profiles.username}</div>
-            <div className="">{song.title}</div>
+          <div className="flex flex-col pl-3 mr-3">
+            <div className="font-semibold text-sm">
+              @{song.profiles.username}
+            </div>
+            <div className="text-xl">{song.title}</div>
           </div>
           <div
-            className={`ml-auto flex py-2 px-3 rounded-full ${
+            className={`w-[65px] shrink-0 flex text-center items-center justify-center ml-auto flex py-1.5 rounded-full ${
               song.team === 2 ? "bg-[#4169E1]" : "bg-[#cf2724]"
             }`}
           >
-            <Heart width="22" color="white" />
-            <div className="ml-1 font-bold text-white text-xl">
+            <Heart width="18" color="white" />
+            <div className="ml-1.5 font-bold text-white text-lg">
               {song.like_count}
             </div>
           </div>
@@ -83,6 +103,9 @@ const Player: React.FC<Props> = ({ room, songs, onFinish }) => {
   const [currentSongId, setCurrentSongId] = useState<number>(songs[0].id);
   const playlistRef = useRef<HTMLDivElement>(null);
 
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
   useEffect(() => {
     if (currentSongIndex >= songs.length) {
       onFinish();
@@ -95,13 +118,44 @@ const Player: React.FC<Props> = ({ room, songs, onFinish }) => {
     scrollToCurrentSong(); // Ensure this runs after the current song ID is updated.
   }, [currentSongId]);
 
+  useEffect(() => {
+    const audio = document.querySelector("audio");
+
+    if (audio) {
+      audio.load();
+      const setAudioData = () => {
+        setDuration(audio.duration);
+      };
+
+      const setAudioTime = () => {
+        setCurrentTime(audio.currentTime);
+      };
+
+      // Adding event listeners
+      audio.addEventListener("loadedmetadata", setAudioData);
+      audio.addEventListener("timeupdate", setAudioTime);
+
+      // Cleanup function to remove event listeners
+      return () => {
+        if (audio) {
+          audio.removeEventListener("loadedmetadata", setAudioData);
+          audio.removeEventListener("timeupdate", setAudioTime);
+        }
+      };
+    }
+  }, [currentSongId]); // Reacting to changes in the 'song' which presumably changes the audio source
+
   const handleMediaReady = () => {
     const audio = document.querySelector("audio");
+    const video = document.querySelector("video");
+
     if (audio) {
       if (audio.paused) {
         audio.play();
+        video?.play();
       } else {
         audio.pause();
+        video?.pause();
       }
     }
   };
@@ -135,37 +189,44 @@ const Player: React.FC<Props> = ({ room, songs, onFinish }) => {
     }
   };
 
+  const currentSongPosition = songs.findIndex(
+    (song) => song.id === currentSongId
+  );
+
   return (
     <div>
       <div className="bg-white h-[100px] flex items-center px-2 font-semibold justify-between rounded-full shadow-xl">
         <img
           src={room.thumbnail}
           alt={room.title}
-          width="90px"
-          height="90px"
-          className="rounded-full shrink-0"
+          className="rounded-full shrink-0 w-[85px] h-[85px]"
         />
-        {room.type === 1 ? (
-          <div className="text-4xl underline decoration-8 decoration-[#cf2724] underline-offset-8">
-            {room.title}
-          </div>
-        ) : (
-          <div className="flex items-center gap-x-2 text-4xl">
-            <div className="text-4xl underline decoration-8 decoration-[#cf2724] underline-offset-8">
-              {room.team_a}
+        <div className="flex flex-col items-center">
+          {room.type === 1 ? (
+            <div className="text-4xl underline decoration-4 decoration-[#cf2724] underline-offset-8">
+              {room.title}
             </div>
-            <div>vs.</div>
-            <div className="text-4xl underline decoration-8 decoration-[#4169E1] underline-offset-8">
-              {room.team_b}
+          ) : (
+            <div className="flex items-center gap-x-2 text-4xl">
+              <div className="text-4xl underline decoration-4 decoration-[#cf2724] underline-offset-8">
+                {room.team_a}
+              </div>
+              <div>vs.</div>
+              <div className="text-4xl underline decoration-4 decoration-[#4169E1] underline-offset-8">
+                {room.team_b}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+          {songs && songs.length > 0 && (
+            <div className="text-lg mt-3 leading-tight">
+              {songs.length} songs ({currentSongPosition + 1}/{songs.length})
+            </div>
+          )}
+        </div>
         <img
           src={room.thumbnail}
           alt={room.title}
-          width="90px"
-          height="90px"
-          className="rounded-full shrink-0"
+          className="rounded-full shrink-0 w-[85px] h-[85px]"
         />
       </div>
       <div className="my-8 h-[550px] w-[800x] flex gap-x-6">
@@ -176,15 +237,20 @@ const Player: React.FC<Props> = ({ room, songs, onFinish }) => {
           <Playlist songs={songs} currentSongId={currentSongId} />
         </div>
         <div className="h-full bg-white w-[400px] rounded-[50px] overflow-hidden">
-          <div className="h-full w-full">
+          <div className="h-full w-full relative bg-black">
             {songs[currentSongIndex] && (
-              <MediaPlayer file={songs[currentSongIndex].meme_file} />
+              <MediaPlayer
+                file={songs[currentSongIndex].meme_file}
+                audioCurrentTime={currentTime}
+                audioDuration={duration}
+              />
             )}
-            <audio
-              src={ASSETS_URL + songs[currentSongIndex].audio_file}
-              autoPlay
-              onEnded={handleMediaEnd}
-            />
+            <audio onEnded={handleMediaEnd} autoPlay>
+              <source
+                src={ASSETS_URL + songs[currentSongIndex].audio_file}
+                type="audio/mpeg"
+              />
+            </audio>
           </div>
         </div>
       </div>

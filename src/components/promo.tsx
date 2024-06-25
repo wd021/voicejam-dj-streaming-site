@@ -26,8 +26,10 @@ const Promo: React.FC = () => {
       </div>
       <div className="text-white text-center mt-12">
         <div className="text-8xl font-bold bangers-font">VOICEJAM.XYZ</div>
-        <div className="mt-2 px-12 text-4xl text-shadow">
-          Memes, music, and mayhem!
+        <div className="mt-2 px-12 text-4xl text-shadow leading-tight">
+          The funnest place on the internet.
+          <br />
+          Come Jam!
         </div>
       </div>
     </div>
