@@ -29,7 +29,7 @@ const Promo: React.FC = () => {
           VOICEJAM.XYZ
         </div>
         <div className="mt-2 px-12 text-2xl lg:text-3xl text-shadow leading-tight">
-          The funnest place on the internet. Come Jam!
+          Where Vibes, Music, and Memes Collide. Come Jam!
         </div>
       </div>
     </div>

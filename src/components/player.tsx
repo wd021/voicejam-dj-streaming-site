@@ -12,16 +12,23 @@ const ASSETS_URL = "https://voicejam-assets.s3.amazonaws.com/";
 const PROFILE_URL = "https://voicejam-profile-images.s3.amazonaws.com/";
 
 export const MediaPlayer = ({
+  title,
   file,
   audioCurrentTime,
   audioDuration,
 }: {
+  title: string;
   file: string;
   audioCurrentTime: number;
   audioDuration: number;
 }) => {
   return (
     <>
+      <div className="flex lg:hidden flex absolute w-full text-center rounded-full items-center justify-center">
+        <div className="bg-white my-4 py-1 w-[75%] rounded-full font-semibold bg-opacity-75">
+          {title}
+        </div>
+      </div>
       {file.endsWith(".mp4") ? (
         <video
           key={file}
@@ -60,7 +67,7 @@ export const Playlist = ({
   currentSongId: number;
 }) => {
   return (
-    <div className="py-4 flex flex-col">
+    <div className="w-full py-4 flex flex-col">
       {songs.map((song) => (
         <div
           data-id={song.id}
@@ -72,9 +79,7 @@ export const Playlist = ({
           <img
             src={PROFILE_URL + song.profiles.profile_pic}
             alt={song.title}
-            width={50}
-            height={50}
-            className="rounded-full"
+            className="rounded-full w-[50px] h-[50px] object-cover shrink-0"
           />
           <div className="flex flex-col pl-3 mr-3">
             <div className="font-semibold text-sm">
@@ -240,6 +245,7 @@ const Player: React.FC<Props> = ({ room, songs, onFinish }) => {
           <div className="h-full w-full relative bg-black">
             {songs[currentSongIndex] && (
               <MediaPlayer
+                title={songs[currentSongIndex].title}
                 file={songs[currentSongIndex].meme_file}
                 audioCurrentTime={currentTime}
                 audioDuration={duration}

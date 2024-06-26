@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 // const ROOMS = [1, 2, 3, 4];
 // const ROOMS = null;
-const ROOMS = [20, 3];
+const ROOMS = [5, 4, 7, 3, 2, 1, 12, 20, 21];
 
 export default function Home() {
   const [rooms, setRooms] = useState<any>([]);
