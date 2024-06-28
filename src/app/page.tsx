@@ -23,6 +23,7 @@ export default function Home() {
       .from("songs")
       .select("*, profiles!songs_user_id_fkey1 (*)")
       .eq("room_id", roomId)
+      .neq("stream_approved", false)
       .order("like_count", { ascending: false });
 
     if (error) console.error("Error fetching songs:", error);
