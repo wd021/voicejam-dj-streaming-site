@@ -3,7 +3,6 @@ import Heart from "./heart";
 import Music from "./music";
 
 interface Props {
-  room: any;
   songs: any[];
   onFinish: () => void;
 }
@@ -85,7 +84,7 @@ export const Playlist = ({
             <div className="font-semibold text-sm">
               @{song.profiles.username}
             </div>
-            <div className="text-xl">{song.title}</div>
+            <div className="text-base">{song.title}</div>
           </div>
           <div
             className={`w-[65px] shrink-0 flex text-center items-center justify-center ml-auto flex py-1.5 rounded-full ${
@@ -103,7 +102,7 @@ export const Playlist = ({
   );
 };
 
-const Player: React.FC<Props> = ({ room, songs, onFinish }) => {
+const Player: React.FC<Props> = ({ songs, onFinish }) => {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [currentSongId, setCurrentSongId] = useState<number>(songs[0].id);
   const playlistRef = useRef<HTMLDivElement>(null);
@@ -194,45 +193,12 @@ const Player: React.FC<Props> = ({ room, songs, onFinish }) => {
     }
   };
 
-  const currentSongPosition = songs.findIndex(
-    (song) => song.id === currentSongId
-  );
-
   return (
     <div>
-      <div className="bg-white h-[85px] lg:h-[100px] flex items-center px-2 font-semibold justify-between rounded-full shadow-xl">
-        <img
-          src={room.thumbnail}
-          alt={room.title}
-          className="rounded-full shrink-0 w-[60px] h-[60px] lg:w-[85px] lg:h-[85px]"
-        />
-        <div className="flex flex-col items-center">
-          {room.type === 1 ? (
-            <div className="text-2xl lg:text-4xl underline decoration-4 decoration-[#cf2724] underline-offset-4 lg:underline-offset-8">
-              {room.title}
-            </div>
-          ) : (
-            <div className="flex items-center gap-x-2 text-4xl">
-              <div className="text-2xl lg:text-4xl underline decoration-4 decoration-[#cf2724] underline-offset-4 lg:underline-offset-8">
-                {room.team_a}
-              </div>
-              <div>vs.</div>
-              <div className="text-2xl lg:text-4xl underline decoration-4 decoration-[#4169E1] underline-offset-4 lg:underline-offset-8">
-                {room.team_b}
-              </div>
-            </div>
-          )}
-          {songs && songs.length > 0 && (
-            <div className="text-sm lg:text-lg mt-2 lg:mt-3 leading-tight">
-              {songs.length} songs ({currentSongPosition + 1}/{songs.length})
-            </div>
-          )}
-        </div>
-        <img
-          src={room.thumbnail}
-          alt={room.title}
-          className="rounded-full shrink-0 w-[60px] h-[60px] lg:w-[85px] lg:h-[85px]"
-        />
+      <div className="bg-white h-[85px] lg:h-[100px] rounded-full bangers-font text-5xl lg:text-7xl px-2 flex items-center justify-between shadow-xl">
+        <Music />
+        <div>VOICEJAM.XYZ</div>
+        <Music />
       </div>
       <div className="my-8 h-[550px] w-[800x] flex gap-x-6 items-center justify-center">
         <div
@@ -260,9 +226,9 @@ const Player: React.FC<Props> = ({ room, songs, onFinish }) => {
           </div>
         </div>
       </div>
-      <div className="bg-white h-[85px] lg:h-[100px] rounded-full bangers-font text-5xl lg:text-7xl px-2 flex items-center justify-between shadow-xl">
+      <div className="bg-white h-[85px] lg:h-[100px] flex items-center px-2 font-semibold justify-between rounded-full shadow-xl text-4xl lg:text-5xl">
         <Music />
-        <div>VOICEJAM.XYZ</div>
+        <div>😎🕺💃🎵</div>
         <Music />
       </div>
     </div>

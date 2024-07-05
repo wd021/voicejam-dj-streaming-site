@@ -6,72 +6,40 @@ import Player from "@/components/player";
 import Promo from "@/components/promo";
 import { useEffect, useState } from "react";
 
-// const ROOMS = [1, 2, 3, 4];
-// const ROOMS = null;
-const ROOMS = [4, 2, 5, 1, 12, 30, 20, 8];
+const SONGS = [
+  108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 75, 74,
+  73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55,
+  54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 35,
+  33, 30,
+];
 
 export default function Home() {
-  const [rooms, setRooms] = useState<any>([]);
-  const [currentRoomIndex, setCurrentRoomIndex] = useState(0);
-  const [currentSongs, setCurrentSongs] = useState<any[] | null>([]);
-  const [nextSongs, setNextSongs] = useState<any[] | null>([]);
+  const [songs, setSongs] = useState<any[] | null>([]);
   const [showPromo, setShowPromo] = useState(false);
 
-  // Fetch songs for a given room ID
-  const fetchSongs = async (roomId: any) => {
+  const fetchSongs = async () => {
     const { data, error } = await supabase
       .from("songs")
       .select("*, profiles!songs_user_id_fkey1 (*)")
-      .eq("room_id", roomId)
-      .neq("stream_approved", false)
-      .order("like_count", { ascending: false });
-
+      .in("id", SONGS);
     if (error) console.error("Error fetching songs:", error);
-    return data;
-  };
 
-  // Function to fetch rooms
-  const fetchRooms = async () => {
-    let query = supabase.from("rooms").select("*");
-
-    if (ROOMS && ROOMS.length > 0) {
-      query = query.in("id", ROOMS);
-    } else {
-      query = query.order("id", { ascending: false });
-    }
-
-    const { data, error } = await query;
-    if (error) {
-      console.error("Error fetching rooms:", error);
-    } else {
-      setRooms(data);
-    }
+    setSongs(data);
   };
 
   // Effect to fetch rooms on mount
   useEffect(() => {
-    fetchRooms();
+    fetchSongs();
   }, []);
-
-  useEffect(() => {
-    if (rooms.length > 0) {
-      fetchSongs(rooms[currentRoomIndex].id).then(setCurrentSongs);
-    }
-  }, [currentRoomIndex, rooms]);
 
   // Effect to handle the room playback loop
   useEffect(() => {
-    if (showPromo && rooms.length > 0) {
-      const nextIndex = (currentRoomIndex + 1) % rooms.length;
-      fetchSongs(rooms[nextIndex].id).then(setNextSongs);
-
+    if (showPromo) {
       setTimeout(() => {
         setShowPromo(false);
-        setCurrentRoomIndex(nextIndex);
-        setCurrentSongs(nextSongs);
       }, 50000); // Show promo for 50 seconds
     }
-  }, [showPromo, rooms, currentRoomIndex, nextSongs]);
+  }, [showPromo]);
 
   // Trigger promo after room finishes
   const handleRoomFinish = () => {
@@ -84,12 +52,11 @@ export default function Home() {
       return <Promo />;
     }
 
-    // Check for current room and songs availability
-    if (rooms[currentRoomIndex] && currentSongs && currentSongs.length > 0) {
+    if (songs && songs.length > 0) {
       return (
         <Player
-          room={rooms[currentRoomIndex]}
-          songs={currentSongs}
+          // room={rooms[currentRoomIndex]}
+          songs={songs}
           onFinish={handleRoomFinish}
         />
       );
