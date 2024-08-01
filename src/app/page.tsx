@@ -4,33 +4,39 @@ import Image from "next/image";
 import { supabase } from "@/utils/supabaseClient";
 import Player from "@/components/player";
 import Promo from "@/components/promo";
-import { useEffect, useState } from "react";
-
-const SONGS = [
-  108, 107, 106, 105, 104, 103, 102, 101, 100, 99, 98, 97, 96, 95, 94, 75, 74,
-  73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55,
-  54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 35,
-  33, 30,
-];
+import { useCallback, useEffect, useState } from "react";
 
 export default function Home() {
   const [songs, setSongs] = useState<any[] | null>([]);
   const [showPromo, setShowPromo] = useState(false);
+  const [lastRefreshTime, setLastRefreshTime] = useState(Date.now());
 
-  const fetchSongs = async () => {
+  const fetchSongs = useCallback(async () => {
     const { data, error } = await supabase
-      .from("songs")
-      .select("*, profiles!songs_user_id_fkey1 (*)")
-      .in("id", SONGS);
+      .from("memesongs")
+      .select("*, profiles!memesongs_user_id_fkey (*)")
+      .eq("featured", true)
+      .order("created_at", { ascending: false })
+      .limit(500);
+
     if (error) console.error("Error fetching songs:", error);
 
     setSongs(data);
-  };
+    setLastRefreshTime(Date.now());
+  }, []);
 
-  // Effect to fetch rooms on mount
+  // Effect to fetch songs on mount and set up hourly refresh
   useEffect(() => {
     fetchSongs();
-  }, []);
+
+    const refreshInterval = setInterval(() => {
+      if (showPromo) {
+        fetchSongs();
+      }
+    }, 60 * 60 * 1000); // Check every hour
+
+    return () => clearInterval(refreshInterval);
+  }, [fetchSongs, showPromo]);
 
   // Effect to handle the room playback loop
   useEffect(() => {

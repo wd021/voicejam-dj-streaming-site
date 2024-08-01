@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useRef, useState } from "react";
 import Heart from "./heart";
 import Music from "./music";
@@ -7,7 +8,9 @@ interface Props {
   onFinish: () => void;
 }
 
-const ASSETS_URL = "https://voicejam-assets.s3.amazonaws.com/";
+const ASSETS_URL = "https://vj-memesongs-assets.s3.amazonaws.com/";
+const ASSETS_COVERS_URL =
+  "https://vj-memesongs-assets-snapshots.s3.amazonaws.com/";
 const PROFILE_URL = "https://voicejam-profile-images.s3.amazonaws.com/";
 
 export const MediaPlayer = ({
@@ -38,14 +41,14 @@ export const MediaPlayer = ({
           webkit-playsinline="true"
           className={`max-w-full w-[450px] h-[675px] lg:rounded-md object-cover flex`}
         >
-          <source src={ASSETS_URL + file} type="video/mp4" />
+          <source src={file} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       ) : (
         <img
-          src={ASSETS_URL + file}
+          src={file}
           alt="Memesong"
-          className={`max-w-full w-[450px] h-[675px] lg:rounded-md flex`}
+          className={`max-w-full w-[450px] h-[675px] object-cover lg:rounded-md flex`}
         />
       )}
       <div className="bg-white h-2 absolute bottom-4 left-10 right-10 rounded-full overflow-hidden">
@@ -66,38 +69,50 @@ export const Playlist = ({
   currentSongId: number;
 }) => {
   return (
-    <div className="w-full py-4 flex flex-col">
-      {songs.map((song) => (
-        <div
-          data-id={song.id}
-          className={`flex items-center px-4 py-4 ${
-            song.id === currentSongId ? "bg-black text-white" : ""
-          }`}
-          key={song.id}
-        >
-          <img
-            src={PROFILE_URL + song.profiles.profile_pic}
-            alt={song.title}
-            className="rounded-full w-[50px] h-[50px] object-cover shrink-0"
-          />
-          <div className="flex flex-col pl-3 mr-3">
-            <div className="font-semibold text-sm">
-              @{song.profiles.username}
-            </div>
-            <div className="text-base">{song.title}</div>
-          </div>
-          <div
-            className={`w-[65px] shrink-0 flex text-center items-center justify-center ml-auto flex py-1.5 rounded-full ${
-              song.team === 2 ? "bg-[#4169E1]" : "bg-[#cf2724]"
-            }`}
-          >
-            <Heart width="18" color="white" />
-            <div className="ml-1.5 font-bold text-white text-lg">
-              {song.like_count}
-            </div>
-          </div>
-        </div>
-      ))}
+    <div className="h-full flex flex-col">
+      <div className="flex flex-col flex-1">
+        {songs.length > 0 &&
+          songs.map((song) => {
+            const userInfo = song.profiles;
+            return (
+              <div
+                data-id={song.id}
+                className={`cursor-pointer flex items-center p-4 ${
+                  song.id === currentSongId
+                    ? "bg-[#f3e6ff]"
+                    : "lg:hover:bg-[#f3e6ff]"
+                }`}
+                key={song.id}
+              >
+                <img
+                  src={`${ASSETS_COVERS_URL}${song.id}_thumb.jpg`}
+                  alt="Memesong Cover"
+                  className="rounded-md h-[75px] w-[50px] object-cover"
+                />
+                <div className="flex flex-col ml-4">
+                  <div className="flex items-center">
+                    <img
+                      src={`${PROFILE_URL}${userInfo?.profile_pic}`}
+                      alt="Profile Pic"
+                      className="rounded-full h-[20px] w-[20px] object-cover"
+                    />
+                    <div className="font-semibold text-sm ml-1">
+                      {userInfo?.username}
+                    </div>
+                  </div>
+                  <div className="mt-2">{song.title}</div>
+                </div>
+                <div className="ml-auto mr-2 text-right text-sm gap-y-1 flex flex-col">
+                  <div>{song.duration}s</div>
+                  <div className="flex">
+                    <div className="mr-0.5 font-semibold">{song.likes}</div>
+                    <Heart width="14px" color="black" />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+      </div>
     </div>
   );
 };
@@ -193,42 +208,42 @@ const Player: React.FC<Props> = ({ songs, onFinish }) => {
     }
   };
 
+  const fileURL = `${ASSETS_URL}video/${songs[currentSongIndex].id}.${songs[currentSongIndex].video_file_type}`;
+  const audioURL = `${ASSETS_URL}audio/${songs[currentSongIndex].id}.${songs[currentSongIndex].audio_file_type}`;
+
   return (
     <div>
-      <div className="bg-white h-[85px] lg:h-[100px] rounded-full bangers-font text-5xl lg:text-7xl px-2 flex items-center justify-between shadow-xl">
+      <div className="bg-white h-[85px] lg:h-[100px] rounded-full bangers-font text-5xl lg:text-7xl px-4 flex items-center justify-between shadow-xl">
         <Music />
-        <div>VOICEJAM.XYZ</div>
+        <div className="px-10">Featured Memesongs</div>
         <Music />
       </div>
       <div className="my-8 h-[550px] w-[800x] flex gap-x-6 items-center justify-center">
         <div
           ref={playlistRef}
-          className="hidden lg:flex h-full bg-white w-[400px] rounded-[50px] overflow-hidden"
+          className="hidden lg:flex h-full bg-white w-[400px] rounded-xl overflow-hidden"
         >
           <Playlist songs={songs} currentSongId={currentSongId} />
         </div>
-        <div className="h-full bg-white w-[400px] rounded-[50px] overflow-hidden">
+        <div className="h-full bg-white w-[400px] rounded-xl overflow-hidden">
           <div className="h-full w-full relative bg-black">
             {songs[currentSongIndex] && (
               <MediaPlayer
                 title={songs[currentSongIndex].title}
-                file={songs[currentSongIndex].meme_file}
+                file={fileURL}
                 audioCurrentTime={currentTime}
                 audioDuration={duration}
               />
             )}
             <audio onEnded={handleMediaEnd} autoPlay>
-              <source
-                src={ASSETS_URL + songs[currentSongIndex].audio_file}
-                type="audio/mpeg"
-              />
+              <source src={audioURL} type="audio/mpeg" />
             </audio>
           </div>
         </div>
       </div>
-      <div className="bg-white h-[85px] lg:h-[100px] flex items-center px-2 font-semibold justify-between rounded-full shadow-xl text-4xl lg:text-5xl">
+      <div className="bg-white h-[85px] lg:h-[100px] rounded-full bangers-font text-5xl lg:text-7xl px-2 flex items-center justify-between shadow-xl">
         <Music />
-        <div>😎🕺💃🎵</div>
+        <div>VOICEJAM.XYZ</div>
         <Music />
       </div>
     </div>

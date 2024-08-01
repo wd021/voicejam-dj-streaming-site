@@ -24,15 +24,14 @@ const Promo: React.FC = () => {
           <img src="/qrcode.png" alt="Cover Image" width="350px" />
         </div>
       </div>
-      <div className="text-white text-center mt-12">
+      <div className="text-white text-center mt-12 bg-black/50 py-4 rounded-full px-12">
         <div className="text-6xl lg:text-8xl font-bold bangers-font">
           VOICEJAM.XYZ
         </div>
-        <div className="mt-2 px-12 text-3xl lg:text-3xl text-shadow leading-tight">
-          Music and memes.
-          <br />
-          The funnest place on the internet!
+        <div className="mt-2 mb-4 px-12 text-3xl lg:text-4xl text-shadow leading-tight">
+          The home of memesongs
         </div>
+        <div className="lg:text-6xl"> 😎🕺💃🎵</div>
       </div>
     </div>
   );
