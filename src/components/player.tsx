@@ -209,6 +209,7 @@ const Player: React.FC<Props> = ({ songs, onFinish }) => {
   };
 
   const fileURL = `${ASSETS_URL}video/${songs[currentSongIndex].id}.${songs[currentSongIndex].video_file_type}`;
+  const compressedURL = `${ASSETS_URL}video-o/${songs[currentSongIndex].id}.mp4`;
   const audioURL = `${ASSETS_URL}audio/${songs[currentSongIndex].id}.${songs[currentSongIndex].audio_file_type}`;
 
   return (
@@ -230,7 +231,9 @@ const Player: React.FC<Props> = ({ songs, onFinish }) => {
             {songs[currentSongIndex] && (
               <MediaPlayer
                 title={songs[currentSongIndex].title}
-                file={fileURL}
+                file={
+                  songs[currentSongIndex].compressed ? compressedURL : fileURL
+                }
                 audioCurrentTime={currentTime}
                 audioDuration={duration}
               />
