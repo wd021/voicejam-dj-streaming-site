@@ -6,6 +6,40 @@ import Player from "@/components/player";
 import Promo from "@/components/promo";
 import { useCallback, useEffect, useState } from "react";
 
+// 1 day buffer
+/*
+const getCurrentWeekStart = () => {
+  const currentDate = new Date();
+
+  // Adjust the day of the week
+  // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const currentDay = currentDate.getUTCDay();
+
+  // Calculate the difference to last Monday
+  // If it's Monday (1), we go back 7 days to get the previous week's Monday
+  // For other days, we go back to the most recent Monday
+  const diff =
+    currentDate.getUTCDate() - currentDay + (currentDay <= 1 ? -6 : 1);
+
+  const mondayDate = new Date(
+    Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), diff)
+  );
+
+  return mondayDate.toISOString().split("T")[0];
+};
+*/
+
+const currentDate = new Date();
+const currentDay = currentDate.getUTCDay();
+const diff =
+  currentDate.getUTCDate() - currentDay + (currentDay === 0 ? -6 : 1);
+const mondayDate = new Date(
+  Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), diff)
+);
+const currentWeekStart = mondayDate.toISOString().split("T")[0];
+
+const QUERY_LIMIT = 20;
+
 export default function Home() {
   const [songs, setSongs] = useState<any[] | null>([]);
   const [showPromo, setShowPromo] = useState(false);
@@ -13,11 +47,13 @@ export default function Home() {
 
   const fetchSongs = useCallback(async () => {
     const { data, error } = await supabase
-      .from("memesongs")
-      .select("*, profiles!memesongs_user_id_fkey (*)")
-      .eq("featured", true)
-      .order("created_at", { ascending: false })
-      .limit(500);
+      .from("weekly_song_plays")
+      .select(
+        `song_id, play_count, memesongs!weekly_song_plays_song_id_fkey(*)`
+      )
+      .eq("week_start", currentWeekStart)
+      .order("play_count", { ascending: false })
+      .limit(QUERY_LIMIT);
 
     if (error) console.error("Error fetching songs:", error);
 
@@ -59,13 +95,7 @@ export default function Home() {
     }
 
     if (songs && songs.length > 0) {
-      return (
-        <Player
-          // room={rooms[currentRoomIndex]}
-          songs={songs}
-          onFinish={handleRoomFinish}
-        />
-      );
+      return <Player songs={songs} onFinish={handleRoomFinish} />;
     }
 
     // Default to Promo if other conditions aren't met

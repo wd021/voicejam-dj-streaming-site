@@ -29,3 +29,12 @@ html {
   font-family: "Bangers", cursive;
   -webkit-text-stroke: 1px black; /* thickness and color of the stroke */
 }
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* for Chrome, Safari, and Opera */
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* for Internet Explorer and Edge */
+  scrollbar-width: none; /* for Firefox */
+}

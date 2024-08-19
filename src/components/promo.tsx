@@ -14,25 +14,13 @@ const Promo: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center h-full bg-white aspect-[2/3] text-center">
       <audio ref={audioRef} src="/voicejam_theme.mp3" preload="auto" />
-      <div className="flex gap-x-6">
-        <div className="bg-white h-[400px] w-[400px] opacity-90 rounded-[100px] flex items-center justify-center flex-col text-center">
-          <img src="/logo.png" alt="Logo" width="350px" className="ml-4" />
-        </div>
-        <div className="hidden lg:flex h-[400px] bg-white opacity-90 flex flex-col items-center justify-center w-[400px] rounded-[100px] overflow-hidden text-center">
-          <img src="/qrcode.png" alt="Cover Image" width="350px" />
-        </div>
+      <div className="bg-white h-[300px] w-[300px] opacity-90 rounded-[100px] flex items-center justify-center flex-col text-center">
+        <img src="/logo.png" alt="Logo" width="350px" className="ml-4" />
       </div>
-      <div className="text-white text-center mt-12 bg-black/50 py-4 rounded-full px-12">
-        <div className="text-6xl lg:text-8xl font-bold bangers-font">
-          VOICEJAM.XYZ
-        </div>
-        <div className="mt-2 mb-4 px-12 text-3xl lg:text-4xl text-shadow leading-tight">
-          The home of memesongs
-        </div>
-        <div className="lg:text-6xl"> 😎🕺💃🎵</div>
-      </div>
+      <div className="text-4xl mt-6 mb-2">JOIN FOR THE LULZ</div>
+      <div className="text-4xl font-bold">VOICEJAM.XYZ</div>
     </div>
   );
 };
